@@ -49,6 +49,7 @@ const showIncidenceYesterday = false;
 const ENABLE_SMOOTH_DARK_MODE = false;
 
 const backgroundColor = new Color('f0f0f0');
+// const backgroundColor = new Color('999999');
 const colorCases = new Color('fe0000 ');
 const colorHealthy = new Color('008800');
 const colorDeahts = new Color('202020');
@@ -59,15 +60,18 @@ const altColorCases = new Color('fe0000');
 const altColorHealthy = new Color('00aa00');
 const altColorDeaths = new Color('f0f0f0');
 
-const LIMIT_DARKRED = 100;
-const LIMIT_RED = 50;
-const LIMIT_ORANGE = 35;
-const LIMIT_YELLOW = 25;
-const LIMIT_DARKRED_COLOR = new Color('9e000a');
-const LIMIT_RED_COLOR = new Color('f6000f');
-const LIMIT_ORANGE_COLOR = new Color('#ff7927');
-const LIMIT_YELLOW_COLOR = new Color('F5D800');
-const LIMIT_GREEN_COLOR = new Color('1CC747');
+const LIMIT_DARKDARKRED = 250
+const LIMIT_DARKRED = 100
+const LIMIT_RED = 50
+const LIMIT_ORANGE = 35
+const LIMIT_YELLOW = 25
+const LIMIT_DARKDARKRED_COLOR = new Color('941100')
+const LIMIT_DARKRED_COLOR = new Color('c01a00')
+const LIMIT_RED_COLOR = new Color('f92206')
+const LIMIT_ORANGE_COLOR = new Color('faa31b')
+const LIMIT_YELLOW_COLOR = new Color('F7dd31')
+const LIMIT_GREEN_COLOR = new Color('00ff80')
+const LIMIT_GRAY_COLOR = new Color('d0d0d0')
 
 const MAX_CHARACHTERS_BIG_HEADER = 14;
 const fontSizeBigHeader = 14;
@@ -132,7 +136,7 @@ let getState = false;
 let fixedCoordinates = [];
 let individualName = '';
 
-let MEDIUMWIDGET = (config.widgetFamily === 'medium') ? true : false;
+let MEDIUMWIDGET = (config.widgetFamily === 'medium') ? true : true;
 /***************************************************************************
  * 
  * Lets's Start ...
@@ -158,7 +162,7 @@ if (args.widgetParameter) {
 let data = {};
 const widget = await createWidget();
 if (!config.runsInWidget) {
-    await widget.presentSmall();
+    await widget.presentMedium();
 }
 Script.setWidget(widget);
 Script.complete();
@@ -240,6 +244,17 @@ function createLeftSide(list, data) {
     const trendStack = middle.addStack();
     createIncidenceBlock(incStack, data);
     createIncTrendBlock(trendStack, data);
+    
+    //test anfang
+    list.addSpacer(1);
+
+    const middle1 = list.addStack();
+    middle1.layoutHorizontally();
+    middle1.centerAlignContent();
+    middle1.size = new Size(headerWidth, 12);
+    const incStackOld = middle1.addStack();
+    createIncidenceOldBlock(incStackOld, data);
+    //test ende
 
     // R-Faktor
     list.addSpacer(2);
@@ -463,10 +478,18 @@ function createHospitalBlock(stack, data) {
 
 function createIncidenceBlock(stack, data) {
     let areaIncidence = (showIncidenceYesterday) ? data.areaIncidenceLastWeek[data.areaIncidenceLastWeek.length - 1] : data.incidence;
-    let incidence = areaIncidence >= 100 ? Math.round(areaIncidence) : parseFloat(areaIncidence).toFixed(1);
+    console.log(data.incidence)
+    console.log(data.areaIncidenceLastWeek[data.areaIncidenceLastWeek.length - 8])
+    let incidence = areaIncidence >= 1000 ? Math.round(areaIncidence) : parseFloat(areaIncidence);//.toFixed(1);
     const incidenceLabel = stack.addText(incidence.toLocaleString());
     incidenceLabel.font = Font.boldSystemFont(25);
     incidenceLabel.textColor = getIncidenceColor(incidence);
+}
+
+function createIncidenceOldBlock(stack, data, fontsize) {
+    const incidenceLabelold = stack.addText('(' + parseFloat(data.areaIncidenceLastWeek[data.areaIncidenceLastWeek.length - 8]).toLocaleString() + ')');
+    incidenceLabelold.font = Font.mediumSystemFont(12);
+    incidenceLabelold.textColor = getIncidenceColor(data.areaIncidenceLastWeek[data.areaIncidenceLastWeek.length - 8]);
 }
 
 function createIncTrendBlock(stack, data) {
@@ -842,17 +865,20 @@ function columnGraph(data, width, height) {
     return context;
 }
 
-
 function getIncidenceColor(incidence) {
-    let color = LIMIT_GREEN_COLOR;
-    if (incidence >= LIMIT_DARKRED) {
-        color = LIMIT_DARKRED_COLOR;
+    let color = LIMIT_GREEN_COLOR
+    if (incidence > LIMIT_DARKDARKRED) {
+        color = LIMIT_DARKDARKRED_COLOR
+    } else if (incidence >= LIMIT_DARKRED) {
+        color = LIMIT_DARKRED_COLOR
     } else if (incidence >= LIMIT_RED) {
-        color = LIMIT_RED_COLOR;
+        color = LIMIT_RED_COLOR
     } else if (incidence >= LIMIT_ORANGE) {
-        color = LIMIT_ORANGE_COLOR;
+        color = LIMIT_ORANGE_COLOR
     } else if (incidence >= LIMIT_YELLOW) {
-        color = LIMIT_YELLOW_COLOR;
+        color = LIMIT_YELLOW_COLOR
+    } else if (incidence === 0) {
+        color = LIMIT_GRAY_COLOR
     }
-    return color;
+    return color
 }
