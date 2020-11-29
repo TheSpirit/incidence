@@ -1,5 +1,8 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
+// icon-color: deep-purple; icon-glyph: file-medical;
+// Variables used by Scriptable.
+// These must be at the very top of the file. Do not edit.
 // icon-color: deep-brown; icon-glyph: magic;
 // LICENCE: Robert Koch-Institut (RKI), dl-de/by-2-0
 // Basic Idea and Code Snippets 
@@ -184,18 +187,18 @@ async function createWidget() {
 
         if (MEDIUMWIDGET) {
             const left = stack.addStack();
-            left.size = new Size(130, 130);
+            left.size = new Size(160, 160);
             left.layoutVertically();
 
             createLeftSide(left, data);
             stack.addSpacer(10);
             const right = stack.addStack();
-            right.size = new Size(130, 130);
+            right.size = new Size(160, 160);
             right.layoutVertically();
             createRightSide(right, data);
         } else {
             const main = stack.addStack();
-            main.size = new Size(130, 130);
+            main.size = new Size(160, 160);
             main.layoutVertically();
             main.useDefaultPadding();
             main.centerAlignContent();
@@ -204,7 +207,7 @@ async function createWidget() {
             header.useDefaultPadding();
             header.centerAlignContent();
             header.layoutHorizontally();
-            header.size = new Size(120, 34);
+            header.size = new Size(150, 34);
             createHeader(header, data);
             header.addSpacer()
 
@@ -224,17 +227,17 @@ async function createWidget() {
 
 
 function createLeftSide(list, data) {
-    const headerWidth = 120;
+    const headerWidth = 150;
 
     const headerLabel = list.addStack();
     headerLabel.useDefaultPadding();
     headerLabel.centerAlignContent();
     headerLabel.layoutHorizontally();
-    headerLabel.size = new Size(headerWidth, 34);
+    headerLabel.size = new Size(headerWidth, 22);
 
     createHeader(headerLabel, data);
 
-    list.addSpacer(1);
+//    list.addSpacer(1);
 
     const middle = list.addStack();
     middle.layoutHorizontally();
@@ -246,7 +249,7 @@ function createLeftSide(list, data) {
     createIncTrendBlock(trendStack, data);
     
     //test anfang
-    list.addSpacer(1);
+//    list.addSpacer(1);
 
     const middle1 = list.addStack();
     middle1.layoutHorizontally();
@@ -257,7 +260,7 @@ function createLeftSide(list, data) {
     //test ende
 
     // R-Faktor
-    list.addSpacer(2);
+    list.addSpacer(1);
     const bottom = list.addStack();
     bottom.layoutHorizontally();
     bottom.centerAlignContent();
@@ -271,11 +274,15 @@ function createLeftSide(list, data) {
     list.addSpacer(5);
     createGraph(list, data);
 
-    list.addSpacer(2);
+    list.addSpacer(1);
+
     const datestack = list.addStack();
-    datestack.layoutHorizontally();
+    datestack.useDefaultPadding();
     datestack.centerAlignContent();
+    datestack.layoutHorizontally();
+//    datestack.centerAlignContent();
     createUpdatedLabel(datestack, data);
+
 }
 
 function createRightSide(list, data) {
@@ -318,7 +325,7 @@ function createCasesBlock(stack, data) {
     // Active Cases 
     const gesCasesStack = stack.addStack();
     gesCasesStack.setPadding(2, 5, 2, 2);
-    gesCasesStack.size = new Size(130, 14);
+    gesCasesStack.size = new Size(160, 14);
 
     let activeCases = data.areaCases - data.areaHealthy - data.areaDeaths;
     const areaGesActiveLabel = gesCasesStack.addText(formatCases(activeCases) + ' aktive Fälle ');
@@ -327,7 +334,7 @@ function createCasesBlock(stack, data) {
     areaGesActiveLabel.textColor = Color.gray();
     gesCasesStack.addSpacer();
 
-    stack.addSpacer(space);
+    stack.addSpacer(4);
 
     // Cases Overview
     const casesStack = stack.addStack();
@@ -335,7 +342,7 @@ function createCasesBlock(stack, data) {
     casesStack.centerAlignContent();
     casesStack.backgroundColor = bgColor;
     casesStack.cornerRadius = 6;
-    casesStack.size = new Size(130, 18);
+    casesStack.size = new Size(160, 18);
 
     const casesLabelSymbol = casesStack.addText('☣︎ ');
     casesLabelSymbol.font = Font.mediumSystemFont(16);
@@ -357,7 +364,7 @@ function createCasesBlock(stack, data) {
     healthyStack.centerAlignContent();
     healthyStack.backgroundColor = bgColor;
     healthyStack.cornerRadius = 6;
-    healthyStack.size = new Size(130, 18);
+    healthyStack.size = new Size(160, 18);
 
     const healthyLabelSymbol = healthyStack.addText('♡ ');
     healthyLabelSymbol.font = Font.mediumSystemFont(12);
@@ -380,7 +387,7 @@ function createCasesBlock(stack, data) {
     deathsStack.centerAlignContent();
     deathsStack.backgroundColor = bgColor;
     deathsStack.cornerRadius = 6;
-    deathsStack.size = new Size(130, 18);
+    deathsStack.size = new Size(160, 18);
 
     const deathsLabelSymbol = deathsStack.addText('† ');
     deathsLabelSymbol.font = Font.mediumSystemFont(14);
@@ -414,7 +421,7 @@ function createHospitalBlock(stack, data) {
     hospitalStack.centerAlignContent();
     hospitalStack.backgroundColor = bgColor;
     hospitalStack.cornerRadius = 6;
-    hospitalStack.size = new Size(130, 18);
+    hospitalStack.size = new Size(160, 18);
 
     const hospitalLabelSymbol = hospitalStack.addText('🏥 ');
     hospitalLabelSymbol.font = Font.mediumSystemFont(10);
@@ -437,7 +444,7 @@ function createHospitalBlock(stack, data) {
     ventStack.centerAlignContent();
     ventStack.backgroundColor = bgColor;
     ventStack.cornerRadius = 6;
-    ventStack.size = new Size(130, 18);
+    ventStack.size = new Size(160, 18);
 
     const ventLabelSymbol = ventStack.addText('🫁 ');
     ventLabelSymbol.font = Font.mediumSystemFont(10);
@@ -460,7 +467,7 @@ function createHospitalBlock(stack, data) {
     bedsStack.centerAlignContent();
     bedsStack.backgroundColor = bgColor;
     bedsStack.cornerRadius = 6;
-    bedsStack.size = new Size(130, 18);
+    bedsStack.size = new Size(160, 18);
 
     const bedsSymbol = bedsStack.addText('🛌 ');
     bedsSymbol.font = Font.mediumSystemFont(10);
@@ -829,7 +836,7 @@ function getRTrend(today, yesterday) {
 
 function createGraph(row, data) {
     let graphHeight = 40;
-    let graphLength = 130;
+    let graphLength = 160;
     let graphRow = row.addStack();
     graphRow.centerAlignContent();
     graphRow.useDefaultPadding();
