@@ -242,7 +242,7 @@ function createLeftSide(list, data) {
     const middle = list.addStack();
     middle.layoutHorizontally();
     middle.centerAlignContent();
-    middle.size = new Size(headerWidth, 28);
+    middle.size = new Size(headerWidth, 34);
     const incStack = middle.addStack();
     const trendStack = middle.addStack();
     createIncidenceBlock(incStack, data);
@@ -254,7 +254,7 @@ function createLeftSide(list, data) {
     const middle1 = list.addStack();
     middle1.layoutHorizontally();
     middle1.centerAlignContent();
-    middle1.size = new Size(headerWidth, 12);
+    middle1.size = new Size(headerWidth, 17);
     const incStackOld = middle1.addStack();
     createIncidenceOldBlock(incStackOld, data);
     //test ende
@@ -264,7 +264,7 @@ function createLeftSide(list, data) {
     const bottom = list.addStack();
     bottom.layoutHorizontally();
     bottom.centerAlignContent();
-    bottom.size = new Size(headerWidth, 12);
+    bottom.size = new Size(headerWidth, 17);
     const rfactorStack = bottom.addStack();
     rfactorStack.layoutHorizontally();
     rfactorStack.centerAlignContent();
@@ -835,7 +835,7 @@ function getRTrend(today, yesterday) {
 }
 
 function createGraph(row, data) {
-    let graphHeight = 40;
+    let graphHeight = 45;
     let graphLength = 160;
     let graphRow = row.addStack();
     graphRow.centerAlignContent();
