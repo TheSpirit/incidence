@@ -229,6 +229,8 @@ async function createWidget() {
 function createLeftSide(list, data) {
     const headerWidth = 150;
 
+    list.addSpacer(6)
+
     const headerLabel = list.addStack();
     headerLabel.useDefaultPadding();
     headerLabel.centerAlignContent();
@@ -254,7 +256,7 @@ function createLeftSide(list, data) {
     const middle1 = list.addStack();
     middle1.layoutHorizontally();
     middle1.centerAlignContent();
-    middle1.size = new Size(headerWidth, 17);
+    middle1.size = new Size(headerWidth, 14);
     const incStackOld = middle1.addStack();
     createIncidenceOldBlock(incStackOld, data);
     //test ende
@@ -264,7 +266,7 @@ function createLeftSide(list, data) {
     const bottom = list.addStack();
     bottom.layoutHorizontally();
     bottom.centerAlignContent();
-    bottom.size = new Size(headerWidth, 17);
+    bottom.size = new Size(headerWidth, 14);
     const rfactorStack = bottom.addStack();
     rfactorStack.layoutHorizontally();
     rfactorStack.centerAlignContent();
@@ -485,8 +487,7 @@ function createHospitalBlock(stack, data) {
 
 function createIncidenceBlock(stack, data) {
     let areaIncidence = (showIncidenceYesterday) ? data.areaIncidenceLastWeek[data.areaIncidenceLastWeek.length - 1] : data.incidence;
-    console.log(data.incidence)
-    console.log(data.areaIncidenceLastWeek[data.areaIncidenceLastWeek.length - 8])
+
     let incidence = areaIncidence >= 1000 ? Math.round(areaIncidence) : parseFloat(areaIncidence);//.toFixed(1);
     const incidenceLabel = stack.addText(incidence.toLocaleString());
     incidenceLabel.font = Font.boldSystemFont(25);
@@ -501,8 +502,12 @@ function createIncidenceOldBlock(stack, data, fontsize) {
 
 function createIncTrendBlock(stack, data) {
     let length = data.areaIncidenceLastWeek.length;
+    
+    console.log('Heute: ' + data.incidence.toString())
+    console.log('Altwert: ' + data.areaIncidenceLastWeek[data.areaIncidenceLastWeek.length - 8].toString())
 
-    const incidenceTrend = getTrendArrowFactor(parseFloat(data.r_factor_today).toFixed(3));
+    //const incidenceTrend = getTrendArrowFactor(parseFloat(data.r_factor_today).toFixed(3));
+    const incidenceTrend = getTrendArrow(data.areaIncidenceLastWeek[data.areaIncidenceLastWeek.length - 8], data.incidence)
     const incidenceLabelTrend = stack.addText('' + incidenceTrend);
     incidenceLabelTrend.font = Font.mediumSystemFont(20);
     incidenceLabelTrend.rightAlignText();
@@ -553,6 +558,7 @@ function getIncidenceLastWeek(jsonData, EWZ) {
         endDate = (showIncidenceYesterday) ? getFormatedDateBeforeDays(INCIDENCE_DAYS - i) : getFormatedDateBeforeDays(INCIDENCE_DAYS - 1 - i);
         incidence.push((getCasesByDates(jsonData, startDate, endDate) / factor).toFixed(1));
     }
+    console.log(incidence);
     return incidence;
 }
 
@@ -767,11 +773,13 @@ function formatCases(cases) {
 }
 
 function getTrendArrow(preValue, currentValue) {
+    console.log(preValue);
+    console.log(currentValue);
     let arrow = '';
     let pct = (parseFloat(currentValue) / parseFloat(preValue) - 1) * 100;
     if (pct < PCT_TREND_EQUAL && pct > -PCT_TREND_EQUAL) {
         arrow = '→';
-    } else if (pct < PCT_TREND_INCREASE) {
+    } else if (pct < PCT_TREND_INCREASE && pct >= PCT_TREND_EQUAL) {
         arrow = '↗';
     } else if (pct >= PCT_TREND_INCREASE) {
         arrow = '↑';
@@ -779,7 +787,7 @@ function getTrendArrow(preValue, currentValue) {
         arrow = '↘';
     } else {
         arrow = '↓';
-    }
+    }    console.log("Prozent: " + pct.toString());
 
     return (arrow);
 }
