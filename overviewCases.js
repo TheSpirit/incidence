@@ -495,7 +495,7 @@ function createIncidenceBlock(stack, data) {
 }
 
 function createIncidenceOldBlock(stack, data, fontsize) {
-    const incidenceLabelold = stack.addText('(' + parseFloat(data.areaIncidenceLastWeek[data.areaIncidenceLastWeek.length - 8]).toLocaleString() + ')');
+    const incidenceLabelold = stack.addText('(' + parseFloat(data.areaIncidenceLastWeek[data.areaIncidenceLastWeek.length - 9]).toLocaleString() + ' / '  + parseFloat(data.areaIncidenceLastWeek[data.areaIncidenceLastWeek.length - 2]).toLocaleString() + ')');
     incidenceLabelold.font = Font.mediumSystemFont(12);
     incidenceLabelold.textColor = getIncidenceColor(data.areaIncidenceLastWeek[data.areaIncidenceLastWeek.length - 8]);
 }
@@ -507,7 +507,8 @@ function createIncTrendBlock(stack, data) {
     console.log('Altwert: ' + data.areaIncidenceLastWeek[data.areaIncidenceLastWeek.length - 8].toString())
 
     //const incidenceTrend = getTrendArrowFactor(parseFloat(data.r_factor_today).toFixed(3));
-    const incidenceTrend = getTrendArrow(data.areaIncidenceLastWeek[data.areaIncidenceLastWeek.length - 8], data.incidence)
+    //const incidenceTrend = getTrendArrow(data.areaIncidenceLastWeek[data.areaIncidenceLastWeek.length - 8], data.incidence)
+    const incidenceTrend = getTrendArrow(data.areaIncidenceLastWeek[data.areaIncidenceLastWeek.length - 9], data.areaIncidenceLastWeek[data.areaIncidenceLastWeek.length - 2])
     const incidenceLabelTrend = stack.addText('' + incidenceTrend);
     incidenceLabelTrend.font = Font.mediumSystemFont(20);
     incidenceLabelTrend.rightAlignText();
@@ -773,8 +774,8 @@ function formatCases(cases) {
 }
 
 function getTrendArrow(preValue, currentValue) {
-    console.log(preValue);
-    console.log(currentValue);
+//     console.log(preValue);
+//     console.log(currentValue);
     let arrow = '';
     let pct = (parseFloat(currentValue) / parseFloat(preValue) - 1) * 100;
     if (pct < PCT_TREND_EQUAL && pct > -PCT_TREND_EQUAL) {
