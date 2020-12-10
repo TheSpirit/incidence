@@ -63,17 +63,21 @@ const altColorCases = new Color('fe0000');
 const altColorHealthy = new Color('00aa00');
 const altColorDeaths = new Color('f0f0f0');
 
+const LIMIT_PINK = 500
 const LIMIT_DARKDARKRED = 250
 const LIMIT_DARKRED = 100
 const LIMIT_RED = 50
 const LIMIT_ORANGE = 35
 const LIMIT_YELLOW = 25
+
+const LIMIT_PINK_COLOR = new Color('d90183')
 const LIMIT_DARKDARKRED_COLOR = new Color('941100')
 const LIMIT_DARKRED_COLOR = new Color('c01a00')
 const LIMIT_RED_COLOR = new Color('f92206')
 const LIMIT_ORANGE_COLOR = new Color('faa31b')
 const LIMIT_YELLOW_COLOR = new Color('F7dd31')
 const LIMIT_GREEN_COLOR = new Color('00ff80')
+
 const LIMIT_GRAY_COLOR = new Color('d0d0d0')
 
 const MAX_CHARACHTERS_BIG_HEADER = 14;
@@ -495,7 +499,7 @@ function createIncidenceBlock(stack, data) {
 }
 
 function createIncidenceOldBlock(stack, data, fontsize) {
-    const incidenceLabelold = stack.addText('(' + parseFloat(data.areaIncidenceLastWeek[data.areaIncidenceLastWeek.length - 9]).toLocaleString() + ' / '  + parseFloat(data.areaIncidenceLastWeek[data.areaIncidenceLastWeek.length - 2]).toLocaleString() + ')');
+    const incidenceLabelold = stack.addText('(' + parseFloat(data.areaIncidenceLastWeek[data.areaIncidenceLastWeek.length - 9]).toLocaleString() + ' | '  + parseFloat(data.areaIncidenceLastWeek[data.areaIncidenceLastWeek.length - 2]).toLocaleString() + ')');
     incidenceLabelold.font = Font.mediumSystemFont(12);
     incidenceLabelold.textColor = getIncidenceColor(data.areaIncidenceLastWeek[data.areaIncidenceLastWeek.length - 8]);
 }
@@ -883,7 +887,9 @@ function columnGraph(data, width, height) {
 
 function getIncidenceColor(incidence) {
     let color = LIMIT_GREEN_COLOR
-    if (incidence > LIMIT_DARKDARKRED) {
+    if (incidence >= LIMIT_PINK) {
+        color = LIMIT_PINK_COLOR
+    } else if (incidence >= LIMIT_DARKDARKRED) {
         color = LIMIT_DARKDARKRED_COLOR
     } else if (incidence >= LIMIT_DARKRED) {
         color = LIMIT_DARKRED_COLOR
