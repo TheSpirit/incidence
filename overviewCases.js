@@ -1,9 +1,6 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
 // icon-color: deep-purple; icon-glyph: file-medical;
-// Variables used by Scriptable.
-// These must be at the very top of the file. Do not edit.
-// icon-color: deep-brown; icon-glyph: magic;
 // LICENCE: Robert Koch-Institut (RKI), dl-de/by-2-0
 // Basic Idea and Code Snippets 
 //      FROM AUTHOR: kevinkub https://gist.github.com/kevinkub/46caebfebc7e26be63403a7f0587f664
@@ -507,8 +504,8 @@ function createIncidenceOldBlock(stack, data, fontsize) {
 function createIncTrendBlock(stack, data) {
     let length = data.areaIncidenceLastWeek.length;
     
-    console.log('Heute: ' + data.incidence.toString())
-    console.log('Altwert: ' + data.areaIncidenceLastWeek[data.areaIncidenceLastWeek.length - 8].toString())
+    //console.log('Heute: ' + data.incidence.toString())
+    //console.log('Altwert: ' + data.areaIncidenceLastWeek[data.areaIncidenceLastWeek.length - 8].toString())
 
     //const incidenceTrend = getTrendArrowFactor(parseFloat(data.r_factor_today).toFixed(3));
     //const incidenceTrend = getTrendArrow(data.areaIncidenceLastWeek[data.areaIncidenceLastWeek.length - 8], data.incidence)
