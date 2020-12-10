@@ -350,7 +350,7 @@ function createCasesBlock(stack, data) {
     casesStack.cornerRadius = 6;
     casesStack.size = new Size(160, 18);
 
-    const casesLabelSymbol = casesStack.addText('☣︎ ');
+    const casesLabelSymbol = casesStack.addText('🔴 ');
     casesLabelSymbol.font = Font.mediumSystemFont(16);
     casesLabelSymbol.textColor = cColor;
     casesStack.addSpacer(1);
@@ -372,7 +372,7 @@ function createCasesBlock(stack, data) {
     healthyStack.cornerRadius = 6;
     healthyStack.size = new Size(160, 18);
 
-    const healthyLabelSymbol = healthyStack.addText('♡ ');
+    const healthyLabelSymbol = healthyStack.addText('🟢 ');
     healthyLabelSymbol.font = Font.mediumSystemFont(12);
     healthyLabelSymbol.size = new Size(20, 12);
     healthyLabelSymbol.textColor = hColor;
@@ -395,7 +395,7 @@ function createCasesBlock(stack, data) {
     deathsStack.cornerRadius = 6;
     deathsStack.size = new Size(160, 18);
 
-    const deathsLabelSymbol = deathsStack.addText('† ');
+    const deathsLabelSymbol = deathsStack.addText('🪦 ');
     deathsLabelSymbol.font = Font.mediumSystemFont(14);
     deathsLabelSymbol.size = new Size(20, 14);
     deathsLabelSymbol.textColor = dColor;
