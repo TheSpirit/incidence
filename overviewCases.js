@@ -351,7 +351,7 @@ function createCasesBlock(stack, data) {
     casesStack.size = new Size(160, 18);
 
     const casesLabelSymbol = casesStack.addText('🔴 ');
-    casesLabelSymbol.font = Font.mediumSystemFont(16);
+    casesLabelSymbol.font = Font.mediumSystemFont(11);
     casesLabelSymbol.textColor = cColor;
     casesStack.addSpacer(1);
     const casesLabelNew = casesStack.addText('+' + formatCases(data.areaNewCases) + ' ');
@@ -373,7 +373,7 @@ function createCasesBlock(stack, data) {
     healthyStack.size = new Size(160, 18);
 
     const healthyLabelSymbol = healthyStack.addText('🟢 ');
-    healthyLabelSymbol.font = Font.mediumSystemFont(12);
+    healthyLabelSymbol.font = Font.mediumSystemFont(11);
     healthyLabelSymbol.size = new Size(20, 12);
     healthyLabelSymbol.textColor = hColor;
     healthyStack.addSpacer(1);
@@ -396,7 +396,7 @@ function createCasesBlock(stack, data) {
     deathsStack.size = new Size(160, 18);
 
     const deathsLabelSymbol = deathsStack.addText('🪦 ');
-    deathsLabelSymbol.font = Font.mediumSystemFont(14);
+    deathsLabelSymbol.font = Font.mediumSystemFont(11);
     deathsLabelSymbol.size = new Size(20, 14);
     deathsLabelSymbol.textColor = dColor;
     deathsStack.addSpacer(1);
@@ -430,7 +430,7 @@ function createHospitalBlock(stack, data) {
     hospitalStack.size = new Size(160, 18);
 
     const hospitalLabelSymbol = hospitalStack.addText('🏥 ');
-    hospitalLabelSymbol.font = Font.mediumSystemFont(10);
+    hospitalLabelSymbol.font = Font.mediumSystemFont(11);
     hospitalLabelSymbol.size = new Size(20, 10);
     hospitalLabelSymbol.textColor = dColor;
     hospitalStack.addSpacer(1);
@@ -453,7 +453,7 @@ function createHospitalBlock(stack, data) {
     ventStack.size = new Size(160, 18);
 
     const ventLabelSymbol = ventStack.addText('🫁 ');
-    ventLabelSymbol.font = Font.mediumSystemFont(10);
+    ventLabelSymbol.font = Font.mediumSystemFont(11);
     ventLabelSymbol.size = new Size(20, 10);
     ventLabelSymbol.textColor = dColor;
     ventStack.addSpacer(1);
@@ -476,7 +476,7 @@ function createHospitalBlock(stack, data) {
     bedsStack.size = new Size(160, 18);
 
     const bedsSymbol = bedsStack.addText('🛌 ');
-    bedsSymbol.font = Font.mediumSystemFont(10);
+    bedsSymbol.font = Font.mediumSystemFont(11);
     bedsSymbol.size = new Size(20, 10);
     bedsSymbol.textColor = dColor;
     bedsStack.addSpacer(1);
