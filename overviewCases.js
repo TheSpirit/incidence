@@ -1,6 +1,12 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
 // icon-color: deep-purple; icon-glyph: file-medical;
+// Variables used by Scriptable.
+// These must be at the very top of the file. Do not edit.
+// icon-color: deep-purple; icon-glyph: file-medical;
+// Variables used by Scriptable.
+// These must be at the very top of the file. Do not edit.
+// icon-color: deep-brown; icon-glyph: magic;
 // LICENCE: Robert Koch-Institut (RKI), dl-de/by-2-0
 // Basic Idea and Code Snippets 
 //      FROM AUTHOR: kevinkub https://gist.github.com/kevinkub/46caebfebc7e26be63403a7f0587f664
@@ -72,8 +78,8 @@ const LIMIT_DARKDARKRED_COLOR = new Color('941100')
 const LIMIT_DARKRED_COLOR = new Color('c01a00')
 const LIMIT_RED_COLOR = new Color('f92206')
 const LIMIT_ORANGE_COLOR = new Color('faa31b')
-const LIMIT_YELLOW_COLOR = new Color('F7dd31')
-const LIMIT_GREEN_COLOR = new Color('00ff80')
+const LIMIT_YELLOW_COLOR = new Color('f7dd31')
+const LIMIT_GREEN_COLOR = new Color('00cc00')
 
 const LIMIT_GRAY_COLOR = new Color('d0d0d0')
 
@@ -164,6 +170,12 @@ if (args.widgetParameter) {
 } else {}
 
 let data = {};
+
+//########### Abruf der Geimpften
+await getNumbers()
+//###########
+
+
 const widget = await createWidget();
 if (!config.runsInWidget) {
     await widget.presentMedium();
@@ -315,6 +327,14 @@ function createHeader(stack, data) {
     const areanameLabel = stack.addText(data.areaName);
     areanameLabel.font = Font.mediumSystemFont(14);
     areanameLabel.lineLimit = 2;
+    
+    if (getGermany == true) {
+    	const vac = stack.addText(" (💉 " + result.quote.toLocaleString() + "%)")
+    	vac.font = Font.mediumSystemFont(12);
+    } else {
+	    const vac = stack.addText(" (💉 " + result.states.Bayern.quote.toLocaleString() + "%)")
+    	vac.font = Font.mediumSystemFont(12);
+    }
 }
 
 function createCasesBlock(stack, data) {
@@ -487,6 +507,8 @@ function createHospitalBlock(stack, data) {
 }
 
 function createIncidenceBlock(stack, data) {
+    
+
     let areaIncidence = (showIncidenceYesterday) ? data.areaIncidenceLastWeek[data.areaIncidenceLastWeek.length - 1] : data.incidence;
 
     let incidence = areaIncidence >= 1000 ? Math.round(areaIncidence) : parseFloat(areaIncidence);//.toFixed(1);
@@ -496,16 +518,27 @@ function createIncidenceBlock(stack, data) {
 }
 
 function createIncidenceOldBlock(stack, data, fontsize) {
-    const incidenceLabelold = stack.addText('(' + parseFloat(data.areaIncidenceLastWeek[data.areaIncidenceLastWeek.length - 9]).toLocaleString() + ' | '  + parseFloat(data.areaIncidenceLastWeek[data.areaIncidenceLastWeek.length - 2]).toLocaleString() + ')');
+    
+    let smoothDark = (Device.isUsingDarkAppearance() && ENABLE_SMOOTH_DARK_MODE);
+    let bgColor = smoothDark ? altBackgroundColor : backgroundColor;
+    let dColor = smoothDark ? altColorDeaths : colorDeahts;
+
+
+//      stack.setPadding(2, 5, 2, 2);
+//      stack.centerAlignContent();
+//      stack.backgroundColor = bgColor;
+//      stack.cornerRadius = 6;
+    
+    const incidenceLabelold = stack.addText(parseFloat(data.areaIncidenceLastWeek[data.areaIncidenceLastWeek.length - 9]).toLocaleString() + ' | '  + parseFloat(data.areaIncidenceLastWeek[data.areaIncidenceLastWeek.length - 2]).toLocaleString());
     incidenceLabelold.font = Font.mediumSystemFont(12);
-    incidenceLabelold.textColor = getIncidenceColor(data.areaIncidenceLastWeek[data.areaIncidenceLastWeek.length - 8]);
+    incidenceLabelold.textColor = getIncidenceColor(data.areaIncidenceLastWeek[data.areaIncidenceLastWeek.length - 9]);
 }
 
 function createIncTrendBlock(stack, data) {
     let length = data.areaIncidenceLastWeek.length;
     
-    //console.log('Heute: ' + data.incidence.toString())
-    //console.log('Altwert: ' + data.areaIncidenceLastWeek[data.areaIncidenceLastWeek.length - 8].toString())
+    console.log('Gestern: ' + data.areaIncidenceLastWeek[data.areaIncidenceLastWeek.length - 2].toString())
+    console.log('Altwert: ' + data.areaIncidenceLastWeek[data.areaIncidenceLastWeek.length - 9].toString())
 
     //const incidenceTrend = getTrendArrowFactor(parseFloat(data.r_factor_today).toFixed(3));
     //const incidenceTrend = getTrendArrow(data.areaIncidenceLastWeek[data.areaIncidenceLastWeek.length - 8], data.incidence)
@@ -692,6 +725,7 @@ async function getData(useFixedCoordsIndex = false) {
         const covidVentilated = parseInt(data.features[0].attributes.faelle_covid_aktuell_beatmet);
         const bedsFree = parseInt(data.features[0].attributes.betten_frei);
         const bedsAll = parseInt(data.features[0].attributes.betten_gesamt);
+        
 
         let locIncidence = 0;
         if (getGermany) {
@@ -745,7 +779,7 @@ async function getData(useFixedCoordsIndex = false) {
 function getAreaName(attr) {
     if (individualName == '') {
         if (getGermany) {
-            return ('Deutschland');
+            return ('DE');
         } else if (getState) {
             return (attr.BL);
         } else {
@@ -900,4 +934,46 @@ function getIncidenceColor(incidence) {
         color = LIMIT_GRAY_COLOR
     }
     return color
+}
+
+async function getNumbers() {
+	var today = new Date()
+	const cacheMinutes = 6 * 60
+	
+    // Set up the file manager.
+    const files = FileManager.local()
+
+    // Set up cache
+    const cachePath = files.joinPath(files.cacheDirectory(), "api-cache-covid-vaccine-numbers") // ggfs. namen anpassen
+    const cacheExists = files.fileExists(cachePath)
+    const cacheDate = cacheExists ? files.modificationDate(cachePath) : 0
+
+    // Get Data
+    try {
+        // If cache exists and it's been less than 60 minutes since last request, use cached data.
+        if (cacheExists && (today.getTime() - cacheDate.getTime()) < (cacheMinutes * 60 * 1000)) {
+            console.log("Get from Cache")
+            result = JSON.parse(files.readString(cachePath))
+        } else {
+            console.log("Get from API")
+            const req2 = new Request('https://rki-vaccination-data.vercel.app/api')
+            result = await req2.loadJSON()
+            console.log("Write Data to Cache")
+            try {
+                files.writeString(cachePath, JSON.stringify(result))
+            } catch (e) {
+                console.log("Creating Cache failed!")
+                console.log(e)
+            }
+        }
+    } catch (e) {
+        console.error(e)
+        if (cacheExists) {
+            console.log("Get from Cache")
+            result = JSON.parse(files.readString(cachePath))
+        } else {
+            console.log("No fallback to cache possible. Due to missing cache.")
+        }
+    }
+    console.log(result) // Prozentzahl an Impfungen
 }
