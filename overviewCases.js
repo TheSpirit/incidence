@@ -1,12 +1,6 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
 // icon-color: deep-purple; icon-glyph: file-medical;
-// Variables used by Scriptable.
-// These must be at the very top of the file. Do not edit.
-// icon-color: deep-purple; icon-glyph: file-medical;
-// Variables used by Scriptable.
-// These must be at the very top of the file. Do not edit.
-// icon-color: deep-brown; icon-glyph: magic;
 // LICENCE: Robert Koch-Institut (RKI), dl-de/by-2-0
 // Basic Idea and Code Snippets 
 //      FROM AUTHOR: kevinkub https://gist.github.com/kevinkub/46caebfebc7e26be63403a7f0587f664
@@ -180,11 +174,13 @@ if (args.widgetParameter) {
         individualName = parameters[3].slice();
     }
 } else {}
-
-let data = {};
+ 
+// let data = {};
+let today = new Date();
+let result;
 
 //########### Abruf der Geimpften
-await getNumbers()
+//await getNumbers()
 //###########
 
 
@@ -197,6 +193,7 @@ Script.complete();
 
 async function createWidget() {
     const data = await getData(0);
+    await getNumbers();
     const list = new ListWidget();
     list.setPadding(10, 10, 10, 10);
     const stack = list.addStack();
@@ -254,7 +251,7 @@ async function createWidget() {
 function createLeftSide(list, data) {
     const headerWidth = 150;
 
-    list.addSpacer(6)
+    list.addSpacer(12)
 
     const headerLabel = list.addStack();
     headerLabel.useDefaultPadding();
@@ -1000,7 +997,7 @@ function createUpdatedLabel(label, data) {
 
     let updateLabelText = dateRKI;
     if (MEDIUMWIDGET) {
-      updateLabelText = updateLabelText + ' / 💉 ' + dateVaccinationAPIformatted;
+      updateLabelText = "        " + updateLabelText + ' / 💉 ' + dateVaccinationAPIformatted;
     }
     const updateLabel = label.addText(updateLabelText);
     updateLabel.font = Font.systemFont(9);
@@ -1019,7 +1016,7 @@ function getRTrend(today, yesterday) {
 }
 
 function createGraph(row, data) {
-    let graphHeight = 45;
+    let graphHeight = 48;
     let graphLength = 160;
     let graphRow = row.addStack();
     graphRow.centerAlignContent();
