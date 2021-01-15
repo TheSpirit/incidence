@@ -115,6 +115,7 @@ const apiUrlDivi = (GetLocation) => `https://services7.arcgis.com/mOBPykOjAyBO2Z
 const apiRUrl = `https://www.rki.de/DE/Content/InfAZ/N/Neuartiges_Coronavirus/Projekte_RKI/Nowcasting_Zahlen_csv.csv?__blob=publicationFile`;
 
 
+
 /***************************************************************************
  * 
  * Global Variables
@@ -124,6 +125,9 @@ const GET_DAYS = 35; // 5 Wochen
 const WEEK_IN_DAYS = 7;
 const EWZ_GER = 83020000;
 const INCIDENCE_DAYS = 28; // 4 Wochen
+
+const needVacDe = 116400000
+const needVacBy = 18400000
 
 const BUNDESLAENDER_SHORT = {
     'Baden-Württemberg': 'BW',
@@ -194,6 +198,9 @@ Script.complete();
 async function createWidget() {
     const data = await getData(0);
     await getNumbers();
+    await getNumbersVac();
+    await setTotalVacNoForGermany(result2);
+    await setTotalVacNoForBy(result2);
     const list = new ListWidget();
     list.setPadding(10, 10, 10, 10);
     const stack = list.addStack();
@@ -251,6 +258,7 @@ async function createWidget() {
 function createLeftSide(list, data) {
     const headerWidth = 150;
 
+    //list.addSpacer(8)
     list.addSpacer(12)
 
     const headerLabel = list.addStack();
@@ -261,17 +269,19 @@ function createLeftSide(list, data) {
 
     createHeader(headerLabel, data);
 
-//    list.addSpacer(1);
+//    list.addSpacer(8);
 
     const middle = list.addStack();
     middle.layoutHorizontally();
     middle.centerAlignContent();
-    middle.size = new Size(headerWidth, 34);
+    middle.size = new Size(headerWidth, 30);
     const incStack = middle.addStack();
     const trendStack = middle.addStack();
     createIncidenceBlock(incStack, data);
     createIncTrendBlock(trendStack, data);
     
+
+
     //test anfang
 //    list.addSpacer(1);
 
@@ -295,7 +305,22 @@ function createLeftSide(list, data) {
     rfactorStack.size = new Size(headerWidth / 2, 12);
     createRFactorBlock(rfactorStack, data, 10);
 
-    list.addSpacer(5);
+
+    //test anfang herdenimmu
+//    list.addSpacer(1);
+
+
+    
+    const middle2 = list.addStack();
+    middle2.layoutHorizontally();
+    middle2.centerAlignContent();
+    middle2.size = new Size(headerWidth, 14);
+    const immublock = middle2.addStack();
+    createImmuBlock(immublock, data);
+    //test ende herdenimmu
+
+
+    list.addSpacer(2);
     createGraph(list, data);
 
     list.addSpacer(1);
@@ -644,6 +669,41 @@ function createIncidenceOldBlock(stack, data, fontsize) {
     incidenceLabelold.font = Font.mediumSystemFont(11);
     incidenceLabelold.textColor = getIncidenceColor(data.areaIncidenceLastWeek[data.areaIncidenceLastWeek.length - 9]);
 }
+
+function createImmuBlock(stack, data, fontsize) {
+    
+    var estimatedDate = new Date();
+    
+    if (getGermany == true) {
+      estimatedDate.setDate(new Date().getDate() + calculateRemainingDays());
+      
+    } else {
+      estimatedDate.setDate(new Date().getDate() + calculateRemainingDaysBy());
+    }
+    
+    
+    
+    let smoothDark = (Device.isUsingDarkAppearance() && ENABLE_SMOOTH_DARK_MODE);
+    let bgColor = smoothDark ? altBackgroundColor : backgroundColor;
+    let dColor = smoothDark ? altColorDeaths : colorDeahts;
+
+
+//      stack.setPadding(2, 5, 2, 2);
+//      stack.centerAlignContent();
+//      stack.backgroundColor = bgColor;
+//      stack.cornerRadius = 6;
+    
+    
+    
+    const immulabel = stack.addText('Immunitat: ' + estimatedDate.toLocaleDateString());
+    immulabel.font = Font.mediumSystemFont(11);
+    //immulabel.textColor = getIncidenceColor(data.areaIncidenceLastWeek[data.areaIncidenceLastWeek.length - 9]);
+}
+//
+
+
+
+
 
 function createIncTrendBlock(stack, data) {
     let length = data.areaIncidenceLastWeek.length;
@@ -1016,7 +1076,7 @@ function getRTrend(today, yesterday) {
 }
 
 function createGraph(row, data) {
-    let graphHeight = 48;
+    let graphHeight = 42;
     let graphLength = 160;
     let graphRow = row.addStack();
     graphRow.centerAlignContent();
@@ -1114,3 +1174,131 @@ async function getNumbers() {
     }
     console.log(result) // Prozentzahl an Impfungen
 }
+
+async function getNumbersVac() {
+  const cacheMinutes = 6 * 60
+  // Set up the file manager.
+  const files = FileManager.local();
+
+  // Set up cache
+  const cachePath = files.joinPath(
+    files.cacheDirectory(),
+    "api-cache-covid-vaccine-numbers-mopo"
+  );
+  const cacheExists = files.fileExists(cachePath);
+  const cacheDate = cacheExists ? files.modificationDate(cachePath) : 0;
+
+  // Get Data
+  try {
+    // If cache exists and it's been less than 60 minutes since last request, use cached data.
+    if (
+      cacheExists &&
+      today.getTime() - cacheDate.getTime() < cacheMinutes * 60 * 1000
+    ) {
+      console.log("Get from Cache");
+      result2 = JSON.parse(files.readString(cachePath));
+    } else {
+      console.log("Get from API");
+      const req3 = new Request(
+        "https://interaktiv.morgenpost.de/data/corona/rki-vaccinations.json"
+      );
+      result2 = await req3.loadJSON();
+      //console.log(result2)
+      console.log("Write Data to Cache");
+      try {
+        files.writeString(cachePath, JSON.stringify(result2));
+      } catch (e) {
+        console.log("Creating Cache failed!");
+        console.log(e);
+      }
+    }
+    console.log('Herdenimmunität:');
+    console.log(result2);
+  } catch (e) {
+    console.error(e);
+    if (cacheExists) {
+      console.log("Get from Cache");
+      result2 = JSON.parse(files.readString(cachePath));
+    } else {
+      console.log("No fallback to cache possible. Due to missing cache.");
+    }
+  }
+  //await setTotalVacNoForGermany(result);
+  
+}
+
+function calculateRemainingDays() {
+  const daysRemaining = Math.round(
+    (needVacDe - result.vaccinated) / calculateDailyVac()
+  );
+  console.log('neededTotalVaccinations')
+  console.log(needVacDe)
+  console.log('result.difference_to_the_previous_day')
+  console.log(result.difference_to_the_previous_day)
+  console.log('calculateDailyVac()')
+  console.log(calculateDailyVac())
+  console.log('daysRemaining')
+  console.log(daysRemaining)
+  return daysRemaining;
+}
+
+function calculateDailyVac() {
+  const latestVacAmount = result.vaccinated;
+  const vacAmount7DaysAgo = resultDe.cumsum_7_days_ago;
+  const dailyVacAmount = Math.round((latestVacAmount - vacAmount7DaysAgo) / 7);
+  
+  console.log('latestVacAmount')
+  console.log(latestVacAmount)
+  console.log('vacAmount7DaysAgo')
+  console.log(vacAmount7DaysAgo)
+  console.log('dailyVacAmount')
+  console.log(dailyVacAmount)
+  return dailyVacAmount;
+}
+
+async function setTotalVacNoForGermany(result2) {
+  //console.log('item:')
+  //console.log(result2)
+  for (var i = result2.length - 1; i > 0; i--) {
+    let currentItem = result2[i];
+    if (currentItem["id"] === "de") {
+      resultDe = currentItem;
+    }
+  }
+}
+
+//für bayern
+function calculateRemainingDaysBy() {
+  const daysRemaining = Math.round(
+    (needVacBy - result.states.Bayern.vaccinated) / calculateDailyVacBy()
+  );
+  console.log('daysRemaining')
+  console.log(daysRemaining)
+  return daysRemaining;
+}
+
+function calculateDailyVacBy() {
+  const latestVacAmount = result.states.Bayern.vaccinated;
+  const vacAmount7DaysAgo = resultBy.cumsum_7_days_ago;
+  const dailyVacAmount = Math.round((latestVacAmount - vacAmount7DaysAgo) / 7);
+  
+  console.log('latestVacAmount')
+  console.log(latestVacAmount)
+  console.log('vacAmount7DaysAgo')
+  console.log(vacAmount7DaysAgo)
+  console.log('dailyVacAmount')
+  console.log(dailyVacAmount)
+  return dailyVacAmount;
+}
+
+async function setTotalVacNoForBy(result2) {
+  //console.log('item:')
+  //console.log(result2)
+  for (var i = result2.length - 1; i > 0; i--) {
+    let currentItem = result2[i];
+    if (currentItem["id"] === "de.by") {
+      resultBy = currentItem;
+    }
+  }
+}
+
